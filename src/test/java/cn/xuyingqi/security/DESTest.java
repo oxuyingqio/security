@@ -1,19 +1,23 @@
 package cn.xuyingqi.security;
 
-import java.util.Arrays;
-
 import org.junit.Test;
+
+import cn.xuyingqi.security.util.SecurityUtils;
 
 public class DESTest {
 
 	@Test
 	public void test() {
 
-		byte[] data = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-				24 };
-		byte[] key = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-		byte[] sec = DES.encrypt(data, key);
-		System.out.println(Arrays.toString(sec));
+		byte[] data = "010037063625270636252011010150".getBytes();
+		byte[] key = "test_key".getBytes();
 
+		byte[] security = DES.encrypt(SecurityUtils.padding(data), key);
+		for (int i = 0; i < security.length; i++) {
+			System.out.println(Integer.toHexString(security[i]));
+		}
+		
+		String str = new String(DES.decrypt(security, key));
+		System.out.println(str);
 	}
 }

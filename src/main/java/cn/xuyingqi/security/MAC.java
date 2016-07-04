@@ -42,8 +42,8 @@ public class MAC {
 
 			// 每一块与初始向量进行异或,并将结果赋予初始向量
 			vector = ByteUtils.xor(ArrayUtils.subarray(macData, i * 8, (i + 1) * 8), vector);
-			// 对初始向量进行DES加密,同时仅取前8位
-			vector = ArrayUtils.subarray(DES.encrypt(vector, key), 0, 8);
+			// 对初始向量进行DES加密
+			vector = DES.encrypt(vector, key);
 		}
 
 		return vector;

@@ -41,7 +41,7 @@ public class DES {
 			SecretKey secureKey = keyFactory.generateSecret(desKey);
 
 			// 获取DES加解密工具实例
-			Cipher cipher = Cipher.getInstance("DES");
+			Cipher cipher = Cipher.getInstance("DES/ECB/NoPadding");
 			// 创建加密随机数生成器
 			SecureRandom random = new SecureRandom();
 			// 密钥+随机数初始化DES加解密工具
@@ -85,7 +85,7 @@ public class DES {
 			SecretKey secureKey = keyFactory.generateSecret(desKey);
 
 			// 获取DES加解密工具实例
-			Cipher cipher = Cipher.getInstance("DES");
+			Cipher cipher = Cipher.getInstance("DES/ECB/NoPadding");
 			// 创建加密随机数生成器
 			SecureRandom random = new SecureRandom();
 			// 密钥+随机数初始化DES加解密工具
