@@ -14,7 +14,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
 /**
- * DES数据加解密
+ * DES加解密算法
  * 
  * @author XuYQ
  *
