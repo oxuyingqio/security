@@ -33,6 +33,7 @@ public class DES {
 	public static byte[] encrypt(byte[] data, byte[] key) {
 
 		try {
+
 			// 生成DES密钥
 			DESKeySpec desKey = new DESKeySpec(key);
 			// 获取DES密钥工厂实例
@@ -46,19 +47,26 @@ public class DES {
 			SecureRandom random = new SecureRandom();
 			// 密钥+随机数初始化DES加解密工具
 			cipher.init(Cipher.ENCRYPT_MODE, secureKey, random);
+
 			// 加密
 			return cipher.doFinal(data);
 		} catch (InvalidKeyException e) {
+
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
+
 			e.printStackTrace();
 		} catch (InvalidKeySpecException e) {
+
 			e.printStackTrace();
 		} catch (NoSuchPaddingException e) {
+
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
+
 			e.printStackTrace();
 		} catch (BadPaddingException e) {
+
 			e.printStackTrace();
 		}
 
@@ -77,6 +85,7 @@ public class DES {
 	public static byte[] decrypt(byte[] data, byte[] key) {
 
 		try {
+
 			// 生成DES密钥
 			DESKeySpec desKey = new DESKeySpec(key);
 			// 获取DES密钥工厂实例
@@ -90,19 +99,26 @@ public class DES {
 			SecureRandom random = new SecureRandom();
 			// 密钥+随机数初始化DES加解密工具
 			cipher.init(Cipher.DECRYPT_MODE, secureKey, random);
+
 			// 解密
 			return cipher.doFinal(data);
 		} catch (InvalidKeyException e) {
+
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
+
 			e.printStackTrace();
 		} catch (InvalidKeySpecException e) {
+
 			e.printStackTrace();
 		} catch (NoSuchPaddingException e) {
+
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
+
 			e.printStackTrace();
 		} catch (BadPaddingException e) {
+
 			e.printStackTrace();
 		}
 

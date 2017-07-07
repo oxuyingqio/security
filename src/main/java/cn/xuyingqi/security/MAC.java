@@ -29,10 +29,11 @@ public class MAC {
 
 		// 若密钥或初始向量长度不为8,则抛字节数组长度错误异常
 		if (key.length != 8 || vector.length != 8) {
+
 			throw new ByteArrayLengthErrorException();
 		}
 
-		// 声明需要计算MAC值的字节数组,填充传入数据
+		// 声明需要计算MAC值的字节数组,并填充缺失数据
 		byte[] macData = SecurityUtils.padding(data);
 
 		// 获取对应块数
