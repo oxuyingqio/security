@@ -2,7 +2,7 @@ package cn.xuyingqi.security;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import cn.xuyingqi.security.util.SecurityUtils;
+import cn.xuyingqi.security.util.SecurityUtil;
 import cn.xuyingqi.util.exception.ByteArrayLengthErrorException;
 import cn.xuyingqi.util.util.ByteUtils;
 
@@ -25,7 +25,7 @@ public class MAC {
 	 *            初始向量
 	 * @return
 	 */
-	public static byte[] mac(byte[] data, byte[] key, byte[] vector) {
+	public static final byte[] mac(byte[] data, byte[] key, byte[] vector) {
 
 		// 若密钥或初始向量长度不为8,则抛字节数组长度错误异常
 		if (key.length != 8 || vector.length != 8) {
@@ -34,7 +34,7 @@ public class MAC {
 		}
 
 		// 声明需要计算MAC值的字节数组,并填充缺失数据
-		byte[] macData = SecurityUtils.padding(data);
+		byte[] macData = SecurityUtil.padding(data);
 
 		// 获取对应块数
 		int blockLength = macData.length / 8;

@@ -6,7 +6,7 @@ package cn.xuyingqi.security.util;
  * @author XuYQ
  *
  */
-public class SecurityUtils {
+public class SecurityUtil {
 
 	/**
 	 * 填充字节数组,使其满足整块数,1块=8字节.
@@ -14,7 +14,7 @@ public class SecurityUtils {
 	 * @param source
 	 * @return
 	 */
-	public static byte[] padding(byte[] source) {
+	public static final byte[] padding(byte[] source) {
 
 		// 获取传入数据最后一块缺少的字节个数
 		int miss = source.length % 8 == 0 ? 0 : (8 - (source.length % 8));

@@ -30,7 +30,7 @@ public class DES {
 	 *            密钥
 	 * @return
 	 */
-	public static byte[] encrypt(byte[] data, byte[] key) {
+	public static final byte[] encrypt(byte[] data, byte[] key) {
 
 		try {
 
@@ -82,7 +82,7 @@ public class DES {
 	 *            密钥
 	 * @return
 	 */
-	public static byte[] decrypt(byte[] data, byte[] key) {
+	public static final byte[] decrypt(byte[] data, byte[] key) {
 
 		try {
 
