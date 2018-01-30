@@ -11,6 +11,11 @@ import java.security.MessageDigest;
 public class MD5 {
 
 	/**
+	 * MD5默认摘要
+	 */
+	private transient static final String DEFAULT_DIGEST = "0123456789abcdef";
+
+	/**
 	 * 加密
 	 * 
 	 * @param data
@@ -46,6 +51,20 @@ public class MD5 {
 
 			return null;
 		}
+	}
+
+	/**
+	 * 加密
+	 * 
+	 * @param data
+	 *            加密数据
+	 * @param digest
+	 *            摘要
+	 * @return
+	 */
+	public static final byte[] encrypt(byte[] data) {
+
+		return MD5.encrypt(data, DEFAULT_DIGEST.getBytes());
 	}
 
 	/**
