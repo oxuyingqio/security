@@ -1,23 +1,20 @@
 package cn.xuyingqi.security;
 
-import org.junit.Test;
+import java.io.UnsupportedEncodingException;
 
-import cn.xuyingqi.security.util.SecurityUtil;
+import org.junit.Test;
 
 public class DESTest {
 
 	@Test
 	public void test() {
 
-		byte[] data = "010037063625270636252011010150".getBytes();
-		byte[] key = "test_key".getBytes();
+		try {
 
-		byte[] security = DES.encrypt(SecurityUtil.padding(data), key);
-		for (int i = 0; i < security.length; i++) {
-			System.out.println(Integer.toHexString(security[i]));
+			System.out.println(new String("鏍￠獙鐢ㄦ埛鍚嶅瘑鐮�".getBytes("GBK"), "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+
+			e.printStackTrace();
 		}
-
-		String str = new String(DES.decrypt(security, key));
-		System.out.println(str);
 	}
 }
