@@ -11,7 +11,7 @@ public class DESTest {
 
 		try {
 
-			System.out.println(new String("鏍￠獙鐢ㄦ埛鍚嶅瘑鐮�".getBytes("GBK"), "UTF-8"));
+			System.out.println(new String("鑷姩鍦ㄧ幆澧冧腑鏌ユ壘鐩爣鎺ュ彛鐨勬墍鏈夊璞�".getBytes("GBK"), "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 
 			e.printStackTrace();
