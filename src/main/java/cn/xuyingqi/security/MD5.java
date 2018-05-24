@@ -8,12 +8,19 @@ import java.security.MessageDigest;
  * @author XuYQ
  *
  */
-public class MD5 {
+public final class MD5 {
 
 	/**
-	 * MD5默认摘要
+	 * 默认摘要
 	 */
 	private transient static final String DEFAULT_DIGEST = "0123456789abcdef";
+
+	/**
+	 * 私有构造方法
+	 */
+	private MD5() {
+
+	}
 
 	/**
 	 * 加密
@@ -58,8 +65,6 @@ public class MD5 {
 	 * 
 	 * @param data
 	 *            加密数据
-	 * @param digest
-	 *            摘要
 	 * @return
 	 */
 	public static final byte[] encrypt(byte[] data) {
@@ -74,8 +79,9 @@ public class MD5 {
 	 */
 	public static void main(String[] args) {
 
-		System.out.println(
-				new String(MD5.encrypt("eeeeeeeeeeeeeewrw213123122222222222222222222222213123213213213erwer".getBytes(),
-						"0123456789abcdef".getBytes())));
+		System.out.println(new String(MD5.encrypt(
+				"NewCapec201711091613317080000241293.651517218771142mwww.baidu.comwww.baidu.com2017110916133173300002413293kDwPDbswSQaFva"
+						.getBytes(),
+				"0123456789abcdef".getBytes())));
 	}
 }

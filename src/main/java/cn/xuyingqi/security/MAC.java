@@ -1,8 +1,10 @@
 package cn.xuyingqi.security;
 
+import java.util.Arrays;
+
 import org.apache.commons.lang3.ArrayUtils;
 
-import cn.xuyingqi.security.util.SecurityUtil;
+import cn.xuyingqi.security.util.SecurityUtils;
 import cn.xuyingqi.util.exception.ByteArrayLengthErrorException;
 import cn.xuyingqi.util.util.ByteUtils;
 
@@ -12,7 +14,19 @@ import cn.xuyingqi.util.util.ByteUtils;
  * @author XuYQ
  *
  */
-public class MAC {
+public final class MAC {
+
+	/**
+	 * 默认初始向量
+	 */
+	private transient static final byte[] DEFAULT_VECTOR = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+	/**
+	 * 私有构造方法
+	 */
+	private MAC() {
+
+	}
 
 	/**
 	 * 获取MAC值
@@ -34,7 +48,7 @@ public class MAC {
 		}
 
 		// 声明需要计算MAC值的字节数组,并填充缺失数据
-		byte[] macData = SecurityUtil.padding(data);
+		byte[] macData = SecurityUtils.padding(data);
 
 		// 获取对应块数
 		int blockLength = macData.length / 8;
@@ -48,5 +62,33 @@ public class MAC {
 		}
 
 		return vector;
+	}
+
+	/**
+	 * 获取MAC值
+	 * 
+	 * @param data
+	 *            数据
+	 * @param key
+	 *            密钥
+	 * @return
+	 */
+	public static final byte[] mac(byte[] data, byte[] key) {
+
+		return MAC.mac(data, key, DEFAULT_VECTOR);
+	}
+
+	/**
+	 * Main函数测试
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+
+		for (int i = 0; i < 100000; i++) {
+
+			System.out.println((i + 1) + Arrays
+					.toString(MAC.mac(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 })));
+		}
 	}
 }

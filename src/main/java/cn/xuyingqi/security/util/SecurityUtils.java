@@ -1,12 +1,19 @@
 package cn.xuyingqi.security.util;
 
 /**
- * Security工具
+ * Security工具类
  * 
  * @author XuYQ
  *
  */
-public class SecurityUtil {
+public final class SecurityUtils {
+
+	/**
+	 * 私有构造方法
+	 */
+	private SecurityUtils() {
+
+	}
 
 	/**
 	 * 填充字节数组,使其满足整块数,1块=8字节.

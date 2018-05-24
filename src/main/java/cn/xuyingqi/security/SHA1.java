@@ -1,6 +1,17 @@
 package cn.xuyingqi.security;
 
 import java.security.MessageDigest;
+import java.util.Map;
+
+import com.alibaba.fastjson.JSON;
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayTradeAppPayRequest;
+import com.alipay.api.response.AlipayTradeAppPayResponse;
+
+import cn.xuyingqi.util.UUIDUtils;
+import cn.xuyingqi.util.util.MapFactory;
 
 /**
  * SHA1加密算法
@@ -8,7 +19,19 @@ import java.security.MessageDigest;
  * @author XuYQ
  *
  */
-public class SHA1 {
+public final class SHA1 {
+
+	/**
+	 * 默认摘要
+	 */
+	private transient static final String DEFAULT_DIGEST = "0123456789abcdef";
+
+	/**
+	 * 私有构造方法
+	 */
+	private SHA1() {
+
+	}
 
 	/**
 	 * 加密
@@ -49,65 +72,63 @@ public class SHA1 {
 	}
 
 	/**
+	 * 加密
+	 * 
+	 * @param data
+	 *            加密数据
+	 * @return
+	 */
+	public static final byte[] encrypt(byte[] data) {
+
+		return SHA1.encrypt(data, DEFAULT_DIGEST.getBytes());
+	}
+
+	/**
 	 * Main函数测试
 	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
 
-		StringBuffer sb = new StringBuffer();
-		sb.append(
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?><wxlifepay><head><err_msg/><merchantid>1480786242</merchantid><ret_code>0</ret_code><trancode>querycallback</trancode><transeqnum>1</transeqnum><version/></head><info><bill_key>1</bill_key><company_id>1480786242</company_id><data><attach/><balance>0</balance><begin_date null=\"true\"/><customer_name>菏泽测试用户22</customer_name><end_date null=\"true\"/><pay_amount>678</pay_amount></data><total_num>1</total_num></info></wxlifepay>");
-		sb.append("hezekunlunranqi");
+		Map<String, Object> initParams = MapFactory.newInstance();
+		initParams.put("subject", "测试订单标题");
+		initParams.put("out_trade_no", UUIDUtils.get32UUID());
+		initParams.put("total_amount", "100");
+		initParams.put("seller_id", "");
+		initParams.put("quit_url",
+				"http://218.28.133.181:13282/aggregatePayment/showAggregatePayment.action?merchant=xuyq&money=100");
+		initParams.put("product_code", "QUICK_WAP_WAY");
 
-		System.out.println(new String(SHA1.encrypt(sb.toString().getBytes(), "0123456789abcdef".getBytes())));
+		AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do", "2016081600254862",
+				"MIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQCrv/as21bz/zMCu/yYF1IFgYpAByOyAzsQinHCc1s5nTpKl8oyUiuaNdaUjU9NPKcgISWCupN2ecbTW4EjiD0R2UwD1qgCeYE4pMRQaiwX4n/V6flM6FhTjEHTBf3A0lgaHqLd3PI4F15KD91PNY5+RYpViVc3ZZ/lPlt0Po9VY5XMq3Q4M9FVVd8WtOwWzBNiRanq8i9vfYDDeXmcNKn6Jabf4TgOtL1AvBgIMWyfkDmK9i2Z5dEGqGlgmxT6OAhaPG54DVq2ZPzxdZrgGvRp56iqXV8Pxhs7tS8CrDdixD9T8qICtDVYDz6Xm2zc9K6rA2hYXeiHqQMnqJ0djINdAgMBAAECggEAQVns2b8oKfWcCllPduvAuPmeilhtG6ohCl0zhiLwvk52RLXXKSidELOVr7bJSwFeMlqKdGDcBYO2xOuXitanLih5xSgji7WCFvSTAmoz1u7HZ7T8uGfcXAYNcedgs8MV5PJtVHBi9jbmGNZKhn5Bdwis53k354tSuR7uG6BGV93HTdJElIVKCnL665DjbjNMut5R59pYU4rInBBwkSykbwK7xQCyNupC5FaPyCxFb1AkmIuAJvEtNl4NFDlEObfZGAlPCELy8vJ6FJUdjamrjKpLYvlPTCX8pvNfDZ6VJlv7q5OuKUBo22i4SWXmcRhilud9l15TZhODKo9fXQFdoQKBgQD9VDRSEXz7/zMOMtl1yPRdaFFht11V7fhdfAZ0Ue9OjlCapLvdzkegq/sxBWV6i4od09oSJhCHBCLGqGahKOEqMXI5EM7oscbrhrWTL6Pvwr3O47LiYLKdysU+BRpXeoFw0c7PLaPkQEjyWLoAtejegxulNJF36XWWc3XStvoZSQKBgQCtj47FhkKObCqVXOoUrLuahhKUNU20j2s+5/dHl1Bq3/qCnAfI3DIVukKmx7StSnfVoiVZgU8ST9ojwjspY+zIQM7RORv7DuZEgnZXGRzm9ezCCeE2LFZdKnjbc+sjhNWrfvl1gYZFP3eACSWmraTMYASK7OXHSeDARxERaoRNdQJ/Q0oam7IJgOZIqXzYRnEad7U96LbMFAch8bMAA+W/qx4iSvF29XPVktgb4OmOCv8FsOaVBj0WJsbyddJFcIlrRcncjUvpqeWO8QDXOkFtSkJwKIRS/86vozo5KkAwvwvLVixkwqNc5UQuHDF1NrsbH/+zWC6edTuOAGiq4023IQKBgFNBwE1EoHzNqofH8IpGaiAwHI14HHR3MA0XHWn8ThlWpEcvLhTOfEAr/3kd57ARPvb+N0h+XT39jDkHHXY3dwiA/jUjXibK+O74XmhdpZ2tbwuNzbk8/5jlnOA49R0uxYjk+inCHnTtgxeqS6NvPNTFYqh6B6fX6raR4MAoBptZAoGBAIpQco7dqjV9PSP/6t8HKXIlU2ZVN/lAvkV2FlAjpB2ZJt2gYAv4XLWYycpkLSzXT9t0GLCdUc8SXWmaHI6wHGXpiXccg+31dxrvN4w5a54EPMb12us0SFMRc5mczNsRKxrBCluNkkfKUplGMGBB+TpuoeYs1gcMT+Ql4VAZuZ6D",
+				"json", "utf-8",
+				"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq7/2rNtW8/8zArv8mBdSBYGKQAcjsgM7EIpxwnNbOZ06SpfKMlIrmjXWlI1PTTynICElgrqTdnnG01uBI4g9EdlMA9aoAnmBOKTEUGosF+J/1en5TOhYU4xB0wX9wNJYGh6i3dzyOBdeSg/dTzWOfkWKVYlXN2Wf5T5bdD6PVWOVzKt0ODPRVVXfFrTsFswTYkWp6vIvb32Aw3l5nDSp+iWm3+E4DrS9QLwYCDFsn5A5ivYtmeXRBqhpYJsU+jgIWjxueA1atmT88XWa4Br0aeeoql1fD8YbO7UvAqw3YsQ/U/KiArQ1WA8+l5ts3PSuqwNoWF3oh6kDJ6idHYyDXQIDAQAB/6FTFY99uhpiq0qadD/uSzQsefWo0aTvP/65zi3eof7TcZ32oWpwIDAQAB",
+				"RSA");
+		AlipayTradeAppPayRequest request = new AlipayTradeAppPayRequest();
+		request.setBizContent(JSON.toJSONString(initParams));
+		try {
 
-		byte[] a = new byte[] { 60, 63, 120, 109, 108, 32, 118, 101, 114, 115, 105, 111, 110, 61, 34, 49, 46, 48, 34,
-				32, 101, 110, 99, 111, 100, 105, 110, 103, 61, 34, 85, 84, 70, 45, 56, 34, 63, 62, 60, 119, 120, 108,
-				105, 102, 101, 112, 97, 121, 62, 60, 104, 101, 97, 100, 62, 60, 101, 114, 114, 95, 109, 115, 103, 47,
-				62, 60, 109, 101, 114, 99, 104, 97, 110, 116, 105, 100, 62, 49, 52, 56, 48, 55, 56, 54, 50, 52, 50, 60,
-				47, 109, 101, 114, 99, 104, 97, 110, 116, 105, 100, 62, 60, 114, 101, 116, 95, 99, 111, 100, 101, 62,
-				48, 60, 47, 114, 101, 116, 95, 99, 111, 100, 101, 62, 60, 116, 114, 97, 110, 99, 111, 100, 101, 62, 113,
-				117, 101, 114, 121, 99, 97, 108, 108, 98, 97, 99, 107, 60, 47, 116, 114, 97, 110, 99, 111, 100, 101, 62,
-				60, 116, 114, 97, 110, 115, 101, 113, 110, 117, 109, 62, 49, 60, 47, 116, 114, 97, 110, 115, 101, 113,
-				110, 117, 109, 62, 60, 118, 101, 114, 115, 105, 111, 110, 47, 62, 60, 47, 104, 101, 97, 100, 62, 60,
-				105, 110, 102, 111, 62, 60, 98, 105, 108, 108, 95, 107, 101, 121, 62, 49, 60, 47, 98, 105, 108, 108, 95,
-				107, 101, 121, 62, 60, 99, 111, 109, 112, 97, 110, 121, 95, 105, 100, 62, 49, 52, 56, 48, 55, 56, 54,
-				50, 52, 50, 60, 47, 99, 111, 109, 112, 97, 110, 121, 95, 105, 100, 62, 60, 100, 97, 116, 97, 62, 60, 97,
-				116, 116, 97, 99, 104, 47, 62, 60, 98, 97, 108, 97, 110, 99, 101, 62, 48, 60, 47, 98, 97, 108, 97, 110,
-				99, 101, 62, 60, 98, 101, 103, 105, 110, 95, 100, 97, 116, 101, 32, 110, 117, 108, 108, 61, 34, 116,
-				114, 117, 101, 34, 47, 62, 60, 99, 117, 115, 116, 111, 109, 101, 114, 95, 110, 97, 109, 101, 62, -70,
-				-54, -44, -13, -78, -30, -54, -44, -45, -61, -69, -89, 50, 50, 60, 47, 99, 117, 115, 116, 111, 109, 101,
-				114, 95, 110, 97, 109, 101, 62, 60, 101, 110, 100, 95, 100, 97, 116, 101, 32, 110, 117, 108, 108, 61,
-				34, 116, 114, 117, 101, 34, 47, 62, 60, 112, 97, 121, 95, 97, 109, 111, 117, 110, 116, 62, 54, 55, 56,
-				60, 47, 112, 97, 121, 95, 97, 109, 111, 117, 110, 116, 62, 60, 47, 100, 97, 116, 97, 62, 60, 116, 111,
-				116, 97, 108, 95, 110, 117, 109, 62, 49, 60, 47, 116, 111, 116, 97, 108, 95, 110, 117, 109, 62, 60, 47,
-				105, 110, 102, 111, 62, 60, 47, 119, 120, 108, 105, 102, 101, 112, 97, 121, 62, 104, 101, 122, 101, 107,
-				117, 110, 108, 117, 110, 114, 97, 110, 113, 105 };
-		byte[] b = new byte[] { 60, 63, 120, 109, 108, 32, 118, 101, 114, 115, 105, 111, 110, 61, 34, 49, 46, 48, 34,
-				32, 101, 110, 99, 111, 100, 105, 110, 103, 61, 34, 85, 84, 70, 45, 56, 34, 63, 62, 60, 119, 120, 108,
-				105, 102, 101, 112, 97, 121, 62, 60, 104, 101, 97, 100, 62, 60, 101, 114, 114, 95, 109, 115, 103, 47,
-				62, 60, 109, 101, 114, 99, 104, 97, 110, 116, 105, 100, 62, 49, 52, 56, 48, 55, 56, 54, 50, 52, 50, 60,
-				47, 109, 101, 114, 99, 104, 97, 110, 116, 105, 100, 62, 60, 114, 101, 116, 95, 99, 111, 100, 101, 62,
-				48, 60, 47, 114, 101, 116, 95, 99, 111, 100, 101, 62, 60, 116, 114, 97, 110, 99, 111, 100, 101, 62, 113,
-				117, 101, 114, 121, 99, 97, 108, 108, 98, 97, 99, 107, 60, 47, 116, 114, 97, 110, 99, 111, 100, 101, 62,
-				60, 116, 114, 97, 110, 115, 101, 113, 110, 117, 109, 62, 49, 60, 47, 116, 114, 97, 110, 115, 101, 113,
-				110, 117, 109, 62, 60, 118, 101, 114, 115, 105, 111, 110, 47, 62, 60, 47, 104, 101, 97, 100, 62, 60,
-				105, 110, 102, 111, 62, 60, 98, 105, 108, 108, 95, 107, 101, 121, 62, 49, 60, 47, 98, 105, 108, 108, 95,
-				107, 101, 121, 62, 60, 99, 111, 109, 112, 97, 110, 121, 95, 105, 100, 62, 49, 52, 56, 48, 55, 56, 54,
-				50, 52, 50, 60, 47, 99, 111, 109, 112, 97, 110, 121, 95, 105, 100, 62, 60, 100, 97, 116, 97, 62, 60, 97,
-				116, 116, 97, 99, 104, 47, 62, 60, 98, 97, 108, 97, 110, 99, 101, 62, 48, 60, 47, 98, 97, 108, 97, 110,
-				99, 101, 62, 60, 98, 101, 103, 105, 110, 95, 100, 97, 116, 101, 32, 110, 117, 108, 108, 61, 34, 116,
-				114, 117, 101, 34, 47, 62, 60, 99, 117, 115, 116, 111, 109, 101, 114, 95, 110, 97, 109, 101, 62, -24,
-				-113, -113, -26, -77, -67, -26, -75, -117, -24, -81, -107, -25, -108, -88, -26, -120, -73, 50, 50, 60,
-				47, 99, 117, 115, 116, 111, 109, 101, 114, 95, 110, 97, 109, 101, 62, 60, 101, 110, 100, 95, 100, 97,
-				116, 101, 32, 110, 117, 108, 108, 61, 34, 116, 114, 117, 101, 34, 47, 62, 60, 112, 97, 121, 95, 97, 109,
-				111, 117, 110, 116, 62, 54, 55, 56, 60, 47, 112, 97, 121, 95, 97, 109, 111, 117, 110, 116, 62, 60, 47,
-				100, 97, 116, 97, 62, 60, 116, 111, 116, 97, 108, 95, 110, 117, 109, 62, 49, 60, 47, 116, 111, 116, 97,
-				108, 95, 110, 117, 109, 62, 60, 47, 105, 110, 102, 111, 62, 60, 47, 119, 120, 108, 105, 102, 101, 112,
-				97, 121, 62, 104, 101, 122, 101, 107, 117, 110, 108, 117, 110, 114, 97, 110, 113, 105 };
+			AlipayTradeAppPayResponse response = alipayClient.pageExecute(request);
 
-		System.out.println(new String(a));
-		System.out.println(new String(b));
+			if (response.isSuccess()) {
+
+				System.out.println("调用成功");
+				System.out.println(response.getBody());
+				System.out.println(response.getCode());
+				System.out.println(response.getMsg());
+				System.out.println(response.getOutTradeNo());
+				System.out.println(response.getSellerId());
+				System.out.println(response.getSubCode());
+				System.out.println(response.getSubMsg());
+				System.out.println(response.getTotalAmount());
+				System.out.println(JSON.toJSONString(response.getParams()));
+			} else {
+
+				System.out.println("调用失败");
+			}
+		} catch (AlipayApiException e) {
+
+			e.printStackTrace();
+		}
 	}
 }
