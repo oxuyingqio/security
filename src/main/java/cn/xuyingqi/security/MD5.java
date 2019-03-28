@@ -1,15 +1,20 @@
 package cn.xuyingqi.security;
 
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
- * MD5加密算法
+ * MD5
  * 
  * @author XuYQ
  *
  */
 public final class MD5 {
 
+	/**
+	 * 默认消息摘要算法
+	 */
+	private transient static final String DEFAULT_MESSAGE_DIGEST_ALGORITHM = "MD5";
 	/**
 	 * 默认摘要
 	 */
@@ -40,21 +45,21 @@ public final class MD5 {
 
 		try {
 
-			MessageDigest md = MessageDigest.getInstance("MD5");
+			MessageDigest md = MessageDigest.getInstance(DEFAULT_MESSAGE_DIGEST_ALGORITHM);
 			md.update(data);
 
 			byte[] mdd = md.digest();
-			byte[] sha1 = new byte[mdd.length * 2];
+			byte[] md5 = new byte[mdd.length * 2];
 			int k = 0;
 			for (int i = 0; i < mdd.length; i++) {
 
 				byte byte0 = mdd[i];
-				sha1[k++] = digest[byte0 >>> 4 & 0xf];
-				sha1[k++] = digest[byte0 & 0xf];
+				md5[k++] = digest[byte0 >>> 4 & 0xf];
+				md5[k++] = digest[byte0 & 0xf];
 			}
 
-			return sha1;
-		} catch (Exception e) {
+			return md5;
+		} catch (NoSuchAlgorithmException e) {
 
 			return null;
 		}

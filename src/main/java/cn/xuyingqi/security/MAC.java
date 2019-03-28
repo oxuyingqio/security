@@ -1,15 +1,20 @@
 package cn.xuyingqi.security;
 
+import java.security.InvalidKeyException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 
 import org.apache.commons.lang3.ArrayUtils;
 
 import cn.xuyingqi.security.util.SecurityUtils;
+import cn.xuyingqi.util.ByteUtils;
 import cn.xuyingqi.util.exception.ByteArrayLengthErrorException;
-import cn.xuyingqi.util.util.ByteUtils;
 
 /**
- * MAC消息认证码
+ * MAC
  * 
  * @author XuYQ
  *
@@ -38,8 +43,13 @@ public final class MAC {
 	 * @param vector
 	 *            初始向量
 	 * @return
+	 * @throws BadPaddingException
+	 * @throws IllegalBlockSizeException
+	 * @throws InvalidKeySpecException
+	 * @throws InvalidKeyException
 	 */
-	public static final byte[] mac(byte[] data, byte[] key, byte[] vector) {
+	public static final byte[] mac(byte[] data, byte[] key, byte[] vector)
+			throws InvalidKeyException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException {
 
 		// 若密钥或初始向量长度不为8,则抛字节数组长度错误异常
 		if (key.length != 8 || vector.length != 8) {
@@ -72,8 +82,13 @@ public final class MAC {
 	 * @param key
 	 *            密钥
 	 * @return
+	 * @throws BadPaddingException
+	 * @throws IllegalBlockSizeException
+	 * @throws InvalidKeySpecException
+	 * @throws InvalidKeyException
 	 */
-	public static final byte[] mac(byte[] data, byte[] key) {
+	public static final byte[] mac(byte[] data, byte[] key)
+			throws InvalidKeyException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException {
 
 		return MAC.mac(data, key, DEFAULT_VECTOR);
 	}
@@ -87,8 +102,18 @@ public final class MAC {
 
 		for (int i = 0; i < 100000; i++) {
 
-			System.out.println((i + 1) + Arrays
-					.toString(MAC.mac(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 })));
+			try {
+				System.out.println((i + 1) + Arrays.toString(
+						MAC.mac(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 })));
+			} catch (InvalidKeyException e) {
+				e.printStackTrace();
+			} catch (InvalidKeySpecException e) {
+				e.printStackTrace();
+			} catch (IllegalBlockSizeException e) {
+				e.printStackTrace();
+			} catch (BadPaddingException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
