@@ -28,15 +28,15 @@ public final class MD5 {
 	}
 
 	/**
-	 * 加密
+	 * 签名
 	 * 
 	 * @param data
-	 *            加密数据
+	 *            数据
 	 * @param digest
 	 *            摘要
 	 * @return
 	 */
-	public static final byte[] encrypt(byte[] data, byte[] digest) {
+	public static final byte[] sign(byte[] data, byte[] digest) {
 
 		if (data.length == 0) {
 
@@ -66,15 +66,15 @@ public final class MD5 {
 	}
 
 	/**
-	 * 加密
+	 * 签名
 	 * 
 	 * @param data
-	 *            加密数据
+	 *            数据
 	 * @return
 	 */
-	public static final byte[] encrypt(byte[] data) {
+	public static final byte[] sign(byte[] data) {
 
-		return MD5.encrypt(data, DEFAULT_DIGEST.getBytes());
+		return MD5.sign(data, DEFAULT_DIGEST.getBytes());
 	}
 
 	/**
@@ -84,7 +84,7 @@ public final class MD5 {
 	 */
 	public static void main(String[] args) {
 
-		System.out.println(new String(MD5.encrypt(
+		System.out.println(new String(MD5.sign(
 				"NewCapec201711091613317080000241293.651517218771142mwww.baidu.comwww.baidu.com2017110916133173300002413293kDwPDbswSQaFva"
 						.getBytes(),
 				"0123456789abcdef".getBytes())));

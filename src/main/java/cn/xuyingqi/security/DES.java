@@ -130,7 +130,7 @@ public final class DES {
 	 * @param key
 	 *            密钥
 	 * @param iv
-	 *            IV
+	 *            向量
 	 * @return
 	 * @throws InvalidKeyException
 	 * @throws InvalidKeySpecException
@@ -173,7 +173,7 @@ public final class DES {
 	 * @param key
 	 *            密钥
 	 * @param iv
-	 *            IV
+	 *            向量
 	 * @return
 	 * @throws InvalidKeyException
 	 * @throws InvalidKeySpecException

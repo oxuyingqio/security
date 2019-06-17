@@ -64,7 +64,7 @@ public final class HmacSHA256 {
 			byte[] data = "appid=wxd543c206a8910bd4&body=测试商品&mch_id=1372585802&nonce_str=nonceStr&notify_url=http://it.newcapec.cn:8086/wechat/test/test.action&out_trade_no=1545959613308&spbill_create_ip=117.158.17.227&total_fee=320&trade_type=JSAPI&key=af12f9838a2cebbfda0ed011085e15a3"
 					.getBytes("UTF-8");
 			byte[] key = "af12f9838a2cebbfda0ed011085e15a3".getBytes("UTF-8");
-			System.out.println(new String(MD5.encrypt(data)).toUpperCase());
+			System.out.println(new String(MD5.sign(data)).toUpperCase());
 			System.out.println(ByteUtils.byteArray2DoubleHexString(HmacSHA256.sign(data, key)));
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();

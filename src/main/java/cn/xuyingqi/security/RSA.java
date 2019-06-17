@@ -23,6 +23,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import cn.xuyingqi.security.model.SecurityXml;
 import cn.xuyingqi.util.Base64Utils;
 
 /**
@@ -53,6 +54,10 @@ public final class RSA {
 	 * 默认密钥算法
 	 */
 	private transient static final String DEFAULT_KEY_ALGORITHM = "RSA";
+	/**
+	 * 默认密钥对长度
+	 */
+	private transient static final Integer DEFAULT_KEY_PAIR_LENGTH = 1024;
 
 	/**
 	 * 私有构造方法
@@ -62,10 +67,10 @@ public final class RSA {
 	}
 
 	/**
-	 * 公钥加密
+	 * 加密
 	 * 
 	 * @param data
-	 *            加密数据
+	 *            数据
 	 * @param publicKey
 	 *            公钥
 	 * @return
@@ -120,42 +125,10 @@ public final class RSA {
 	}
 
 	/**
-	 * 私钥解密
+	 * 加密
 	 * 
 	 * @param data
-	 *            解密数据
-	 * @param privateKey
-	 *            私钥
-	 * @return
-	 * @throws InvalidKeyException
-	 * @throws BadPaddingException
-	 * @throws IllegalBlockSizeException
-	 */
-	public static final byte[] decrypt(byte[] data, PrivateKey privateKey)
-			throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-
-		try {
-
-			Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_TRANSFORMATION);
-			cipher.init(Cipher.DECRYPT_MODE, privateKey);
-
-			return cipher.doFinal(data);
-		} catch (NoSuchAlgorithmException e) {
-
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	/**
-	 * 私钥加密
-	 * 
-	 * @param data
-	 *            加密数据
+	 *            数据
 	 * @param privateKey
 	 *            私钥
 	 * @return
@@ -208,10 +181,12 @@ public final class RSA {
 	}
 
 	/**
-	 * 公钥解密
+	 * 解密
 	 * 
 	 * @param data
+	 *            数据
 	 * @param publicKey
+	 *            公钥
 	 * @return
 	 * @throws InvalidKeyException
 	 * @throws BadPaddingException
@@ -262,10 +237,70 @@ public final class RSA {
 	}
 
 	/**
-	 * 私钥签名
+	 * 解密
 	 * 
 	 * @param data
+	 *            数据
 	 * @param privateKey
+	 *            私钥
+	 * @return
+	 * @throws InvalidKeyException
+	 * @throws BadPaddingException
+	 * @throws IllegalBlockSizeException
+	 */
+	public static final byte[] decrypt(byte[] data, PrivateKey privateKey)
+			throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+
+		try {
+
+			Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_TRANSFORMATION);
+			cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+			int dataLength = data.length;
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			int offSet = 0;
+			byte[] cache;
+			int index = 0;
+			// 对数据分段解密
+			while (dataLength - offSet > 0) {
+
+				if (dataLength - offSet > DEFAULT_MAX_DECRYPT_BLOCK) {
+
+					cache = cipher.doFinal(data, offSet, DEFAULT_MAX_DECRYPT_BLOCK);
+				} else {
+
+					cache = cipher.doFinal(data, offSet, dataLength - offSet);
+				}
+				out.write(cache, 0, cache.length);
+				index++;
+				offSet = index * DEFAULT_MAX_DECRYPT_BLOCK;
+			}
+
+			byte[] decrypt = out.toByteArray();
+			out.close();
+
+			return decrypt;
+		} catch (NoSuchAlgorithmException e) {
+
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e) {
+
+			e.printStackTrace();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	/**
+	 * 签名
+	 * 
+	 * @param data
+	 *            数据
+	 * @param privateKey
+	 *            私钥
 	 * @return
 	 * @throws InvalidKeyException
 	 * @throws SignatureException
@@ -288,11 +323,14 @@ public final class RSA {
 	}
 
 	/**
-	 * 公钥验签
+	 * 验签
 	 * 
 	 * @param data
-	 * @param publicKey
+	 *            数据
 	 * @param sign
+	 *            签名
+	 * @param publicKey
+	 *            公钥
 	 * @return
 	 * @throws InvalidKeyException
 	 * @throws SignatureException
@@ -345,11 +383,11 @@ public final class RSA {
 	 */
 	public static final KeyPair generateRSAKeyPair() {
 
-		return generateRSAKeyPair(1024);
+		return generateRSAKeyPair(DEFAULT_KEY_PAIR_LENGTH);
 	}
 
 	/**
-	 * 通过公钥byte[](publicKey.getEncoded())将公钥恢复，适用于RSA算法
+	 * 通过公钥byte[](publicKey.getEncoded())将公钥恢复
 	 * 
 	 * @param encoded
 	 * @return
@@ -369,7 +407,7 @@ public final class RSA {
 	}
 
 	/**
-	 * 通过私钥byte[]将私钥恢复，适用于RSA算法
+	 * 通过私钥byte[](privateKey.getEncoded())将私钥恢复
 	 * 
 	 * @param encoded
 	 * @return
@@ -458,8 +496,8 @@ public final class RSA {
 			System.out.println(
 					RSA.verify("私钥签名,公钥验签".getBytes(), RSA.sign("私钥签名,公钥验签".getBytes(), privateKey), publicKey));
 
-			Base64Utils.encode(RSA.sign("私钥签名,公钥验签".getBytes(), RSA.recoveryPrivateKey(Base64Utils.decode(""))));
-
+			Base64Utils.encode(RSA.sign("私钥签名,公钥验签".getBytes(),
+					RSA.recoveryPrivateKey(Base64Utils.decode(SecurityXml.getInstance().getRsa().getPrivateKey()))));
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
