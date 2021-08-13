@@ -15,7 +15,7 @@
 		<project.build.jdk.version>1.8</project.build.jdk.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<org.bouncycastle.version>1.59</org.bouncycastle.version>
+		<org.bouncycastle.version>1.67</org.bouncycastle.version>
 
 		<xuyingqi.version>0.0.1</xuyingqi.version>
 
